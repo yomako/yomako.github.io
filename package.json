@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "particles.vue3": "^1.41.6",
     "vue": "^3.2.25"
   },
   "devDependencies": {
