@@ -1,24 +1,123 @@
 <template>
+  <div class="header">
   <h1>GOIMAGINARY</h1>
-  <Particles
-      id="tsparticles"
-      :options="options"
-    />
 
   <p>just GO into the IMAGINARY world</p>
+  </div>
+  <v-stage class="stage" :config="configKonva">
+
+    <v-layer>
+      <v-circle :config="circle1"></v-circle>
+      <v-circle :config="circle2"></v-circle>
+    </v-layer>
+  </v-stage>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import options from "../options.js";
+<script>
 
-let themeableContainer;
+export default {
+
+  data() {
+    return {
+      configKonva: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      },
+      G: 1000,
+      dt: 1,
+      circle1: {
+        x: window.innerWidth/2+200,
+        y: window.innerHeight/2-200,
+        vx: 1,
+        vy: 1,
+        radius: 70,
+        fill: "red",
+      },
+      circle2: {
+        x: window.innerWidth/2-200,
+        y: window.innerHeight/2+200,
+        vx: 1,
+        vy: -1,
+        radius: 70,
+        fill: "white",
+      }
+    };
+  },
+
+  methods: {
+    acceleration(q1, q2, d) {
+      return -this.G * (q2 - q1) * Math.pow(d, -3);
+    },
+
+    velocity(v, a) {
+      return v + a*this.dt;
+    },
+
+    distance(vp) {
+      return vp*this.dt;
+    },
+    
+    animation() {
+      const d = Math.sqrt(Math.pow(this.circle1.x - this.circle2.x, 2) + Math.pow(this.circle1.y - this.circle2.y, 2));
+      const a1x = this.acceleration(this.circle2.x, this.circle1.x, d);
+      const a1y = this.acceleration(this.circle2.y, this.circle1.y, d);
+      const a2x = -a1x;
+      const a2y = -a1y;
+
+      const v1xp = this.velocity(this.circle1.vx, a1x);
+      const v1yp = this.velocity(this.circle1.vy, a1y);
+      const v2xp = this.velocity(this.circle2.vx, a2x);
+      const v2yp = this.velocity(this.circle2.vy, a2y);
+
+      const dx1 = this.distance(v1xp);
+      const dy1 = this.distance(v1yp);
+      const dx2 = this.distance(v2xp);
+      const dy2 = this.distance(v2yp);
+      
+      this.circle1.vx = v1xp;
+      this.circle1.vy = v1yp;
+      this.circle2.vx = v2xp;
+      this.circle2.vy = v2yp;
 
 
+      const cx = this.configKonva.width / 2;
+      const cy = this.configKonva.height / 2;
+      const d0x = this.circle1.x + (this.circle2.x - this.circle1.x) / 2;
+      const d0y = this.circle1.y + (this.circle2.y - this.circle1.y) / 2;
+      const Tx = cx - d0x;
+      const Ty = cy - d0y;
 
+      this.circle1.x += dx1 + Tx;
+      this.circle1.y += dy1 + Ty;
+      this.circle2.x += dx2 + Tx;
+      this.circle2.y += dy2 + Ty;
+
+    }
+  },
+
+  created() {
+    const anim = setInterval(this.animation, 50);
+  }
+}
 </script>
 
 
 <style scoped>
+
+h1 {
+  background-color: transparent;
+}
+
+p {
+  background-color: transparent;
+}
+
+.header {
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  z-index: 1;
+}
 
 </style>

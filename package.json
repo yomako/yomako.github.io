@@ -8,8 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "konva": "^8.3.5",
     "particles.vue3": "^1.41.6",
-    "vue": "^3.2.25"
+    "vue": "^3.2.25",
+    "vue-konva": "^3.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.0",

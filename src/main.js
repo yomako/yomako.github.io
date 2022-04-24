@@ -1,5 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import Particles from "particles.vue3";
+import VueKonva from 'vue-konva';
 
-createApp(App).use(Particles).mount('#app')
+
+const app = createApp(App);
+app.use(VueKonva);
+app.mount('#app');
