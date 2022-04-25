@@ -7,8 +7,8 @@
   <v-stage class="stage" :config="configKonva">
 
     <v-layer>
-      <v-circle :config="circle1"></v-circle>
-      <v-circle :config="circle2"></v-circle>
+      <v-circle :config="conf1"></v-circle>
+      <v-circle :config="conf2"></v-circle>
     </v-layer>
   </v-stage>
 </template>
@@ -24,22 +24,32 @@ export default {
         height: window.innerHeight,
       },
       G: 1000,
-      dt: 1,
+      dt: 7,
+      radius: window.innerWidth > window.innerHeight ? window.innerHeight / 14 : window.innerWidth / 14,
+      delta: window.innerHeight/2,
+      conf1: {
+        x: window.innerWidth/2+200,
+        y: window.innerHeight/2-200,
+        radius: window.innerWidth > window.innerHeight ? window.innerHeight / 14 : window.innerWidth / 14,
+        fill: "red",
+      },
+      conf2: {
+        x: window.innerWidth/2-200,
+        y: window.innerHeight/2+200,
+        radius: window.innerWidth > window.innerHeight ? window.innerHeight / 14 : window.innerWidth / 14,
+        fill: "white",
+      },
       circle1: {
         x: window.innerWidth/2+200,
         y: window.innerHeight/2-200,
         vx: 1,
         vy: 1,
-        radius: 70,
-        fill: "red",
       },
       circle2: {
         x: window.innerWidth/2-200,
         y: window.innerHeight/2+200,
         vx: 1,
         vy: -1,
-        radius: 70,
-        fill: "white",
       }
     };
   },
@@ -55,6 +65,21 @@ export default {
 
     distance(vp) {
       return vp*this.dt;
+    },
+
+    transform(d) {
+      if (d < this.delta) return d;
+      else return 2*this.delta - Math.pow(this.delta, 2) / d;
+    },
+
+    retransform(l) {
+      if (l < this.delta) return l;
+      else return Math.pow(this.delta, 2) / (2*this.delta - l);
+    },
+
+    radiusTransform(d) {
+      if (d < this.delta) return this.radius;
+      else return this.radius * this.delta / d;
     },
     
     animation() {
@@ -91,6 +116,17 @@ export default {
       this.circle1.y += dy1 + Ty;
       this.circle2.x += dx2 + Tx;
       this.circle2.y += dy2 + Ty;
+
+      const dxl = (this.circle1.x - this.circle2.x) * this.transform(d)/d;
+      const dyl = (this.circle1.y - this.circle2.y) * this.transform(d)/d;
+
+      this.conf1.x = cx - dxl/2;
+      this.conf1.y = cy - dyl/2;
+      this.conf2.x = cx + dxl/2;
+      this.conf2.y = cy + dyl/2;
+
+      this.conf1.radius = this.radiusTransform(d);
+      this.conf2.radius = this.radiusTransform(d);
 
     }
   },

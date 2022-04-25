@@ -2,6 +2,7 @@
 
 npm run build
 
+rm -rf docs
 mv dist docs
 cp CNAME docs/CNAME
 
