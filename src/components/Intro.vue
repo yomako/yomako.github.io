@@ -9,6 +9,43 @@
     <v-layer>
       <v-circle :config="conf1"></v-circle>
       <v-circle :config="conf2"></v-circle>
+
+      <v-shape :config="{
+        sceneFunc: function(context, shape) {
+          const interval = 150;
+          
+          context.beginPath();
+          context.moveTo(configKonva.widthCenter, 0);
+          context.lineTo(configKonva.widthCenter, configKonva.height);
+          var step = 0;
+          while (configKonva.widthCenter + interval*factor*step < configKonva.width) {
+            context.moveTo(configKonva.widthCenter-interval*factor*step, 0);
+            context.lineTo(configKonva.widthCenter-interval*factor*step, configKonva.height);
+
+            context.moveTo(configKonva.widthCenter+interval*factor*step, 0);
+            context.lineTo(configKonva.widthCenter+interval*factor*step, configKonva.height);
+            step++;
+          }
+
+          context.moveTo(0, configKonva.heightCenter);
+          context.lineTo(configKonva.width, configKonva.heightCenter);
+          step = 0;
+          while (configKonva.heightCenter + interval*factor*step < configKonva.height) {
+            context.moveTo(0, configKonva.heightCenter - interval*factor*step);
+            context.lineTo(configKonva.width, configKonva.heightCenter - interval*factor*step);
+
+            context.moveTo(0, configKonva.heightCenter + interval*factor*step);
+            context.lineTo(configKonva.width, configKonva.heightCenter + interval*factor*step);
+            step++;
+          }
+          context.closePath();
+
+          // special Konva.js method
+          context.fillStrokeShape(shape);
+        },
+        stroke: 'white',
+        strokeWidth: 0.1
+      }"></v-shape>
     </v-layer>
   </v-stage>
 </template>
@@ -22,6 +59,8 @@ export default {
       configKonva: {
         width: window.innerWidth,
         height: window.innerHeight,
+        widthCenter: window.innerWidth/2,
+        heightCenter: window.innerHeight/2,
       },
       G: 1000,
       dt: 7,
@@ -50,8 +89,18 @@ export default {
         y: window.innerHeight/2+200,
         vx: 1,
         vy: -1,
-      }
+      },
+      factor: 1,
+      hSize: '40px',
+      pSize: '19px'
     };
+  },
+
+  watch:{
+    factor(val, oldVal){
+      this.hSize = val * 40 + 'px';
+      this.pSize = val * 19 + 'px';
+    }
   },
 
   methods: {
@@ -84,6 +133,7 @@ export default {
     
     animation() {
       const d = Math.sqrt(Math.pow(this.circle1.x - this.circle2.x, 2) + Math.pow(this.circle1.y - this.circle2.y, 2));
+      this.factor = this.transform(d)/d;
       const a1x = this.acceleration(this.circle2.x, this.circle1.x, d);
       const a1y = this.acceleration(this.circle2.y, this.circle1.y, d);
       const a2x = -a1x;
@@ -142,10 +192,12 @@ export default {
 
 h1 {
   background-color: transparent;
+  font-size: v-bind('hSize');
 }
 
 p {
   background-color: transparent;
+  font-size: v-bind('pSize');
 }
 
 .header {
