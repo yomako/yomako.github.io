@@ -11,10 +11,13 @@
     "konva": "^8.3.5",
     "particles.vue3": "^1.41.6",
     "vue": "^3.2.25",
-    "vue-konva": "^3.0.0"
+    "vue-konva": "^3.0.0",
+    "vue-router": "^4.0.13"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.0",
+    "naive-ui": "^2.28.5-beta.0",
+    "vfonts": "0.0.3",
     "vite": "^2.8.0"
   }
 }

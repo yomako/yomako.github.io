@@ -2,7 +2,7 @@
   <div class="header">
   <h1>GOIMAGINARY</h1>
 
-  <p>just GO into the IMAGINARY world</p>
+  <p>just <strong @click="toMenu">GO</strong> into the <strong>IMAGINARY</strong> world</p>
   </div>
   <v-stage class="stage" :config="configKonva">
 
@@ -40,7 +40,6 @@
           }
           context.closePath();
 
-          // special Konva.js method
           context.fillStrokeShape(shape);
         },
         stroke: 'white',
@@ -69,14 +68,18 @@ export default {
       conf1: {
         x: window.innerWidth/2+200,
         y: window.innerHeight/2-200,
+        x0: window.innerWidth/2+130,
+        y0: window.innerHeight/2-130,
         radius: window.innerWidth > window.innerHeight ? window.innerHeight / 14 : window.innerWidth / 14,
-        fill: "red",
+        fill: "white",
       },
       conf2: {
         x: window.innerWidth/2-200,
         y: window.innerHeight/2+200,
+        x0: window.innerWidth/2-130,
+        y0: window.innerHeight/2+130,
         radius: window.innerWidth > window.innerHeight ? window.innerHeight / 14 : window.innerWidth / 14,
-        fill: "white",
+        fill: "red",
       },
       circle1: {
         x: window.innerWidth/2+200,
@@ -92,7 +95,9 @@ export default {
       },
       factor: 1,
       hSize: '40px',
-      pSize: '19px'
+      pSize: '19px',
+      anim: null,
+      toPosition: false,
     };
   },
 
@@ -139,10 +144,10 @@ export default {
       const a2x = -a1x;
       const a2y = -a1y;
 
-      const v1xp = this.velocity(this.circle1.vx, a1x);
-      const v1yp = this.velocity(this.circle1.vy, a1y);
-      const v2xp = this.velocity(this.circle2.vx, a2x);
-      const v2yp = this.velocity(this.circle2.vy, a2y);
+      const v1xp = this.toPosition ? (this.conf1.x0 - this.circle1.x) / 100 : this.velocity(this.circle1.vx, a1x);
+      const v1yp = this.toPosition ? (this.conf1.y0 - this.circle1.y) / 100 : this.velocity(this.circle1.vy, a1y);
+      const v2xp = this.toPosition ? (this.conf2.x0 - this.circle2.x) / 100 : this.velocity(this.circle2.vx, a2x);
+      const v2yp = this.toPosition ? (this.conf2.y0 - this.circle2.y) / 100: this.velocity(this.circle2.vy, a2y);
 
       const dx1 = this.distance(v1xp);
       const dy1 = this.distance(v1yp);
@@ -177,12 +182,17 @@ export default {
 
       this.conf1.radius = this.radiusTransform(d);
       this.conf2.radius = this.radiusTransform(d);
+      
+      if (Math.abs(this.circle1.x - this.conf1.x0) < 10 && this.toPosition) clearInterval(this.anim);
+    },
 
-    }
+    toMenu() {
+      this.toPosition = true;
+    },
   },
 
   created() {
-    const anim = setInterval(this.animation, 50);
+    this.anim = setInterval(this.animation, 50);
   }
 }
 </script>
@@ -202,9 +212,9 @@ p {
 
 .header {
   position: absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 1;
 }
 

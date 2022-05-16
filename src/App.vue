@@ -1,11 +1,9 @@
 <template>
-  <Intro  />
+  <router-view />
 </template>
 
 
 <script setup>
-
-import Intro from './components/Intro.vue';
 
 </script>
 
