@@ -183,7 +183,7 @@ export default {
       this.conf1.radius = this.radiusTransform(d);
       this.conf2.radius = this.radiusTransform(d);
       
-      if (Math.abs(this.circle1.x - this.conf1.x0) < 10 && this.toPosition) clearInterval(this.anim);
+      if (Math.abs(this.circle1.x - this.conf1.x0) < 10 && Math.abs(v1xp) < 0.001 && this.toPosition) clearInterval(this.anim);
     },
 
     toMenu() {
