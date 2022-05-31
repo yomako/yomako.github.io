@@ -1,9 +1,9 @@
 <template>
-  <div class="header">
-  <h1>GOIMAGINARY</h1>
+    <div class="header">
+      <h1>GOIMAGINARY</h1>
 
-  <p>just <strong @click="toMenu">GO</strong> into the <strong>IMAGINARY</strong> world</p>
-  </div>
+      <p>just <strong @click="toMenu">GO</strong> into the <strong>IMAGINARY</strong> world</p>
+    </div>
   <v-stage class="stage" :config="configKonva">
 
     <v-layer>
@@ -96,6 +96,7 @@ export default {
       factor: 1,
       hSize: '40px',
       pSize: '19px',
+      top: 50,
       anim: null,
       toPosition: false,
     };
@@ -105,6 +106,12 @@ export default {
     factor(val, oldVal){
       this.hSize = val * 40 + 'px';
       this.pSize = val * 19 + 'px';
+    }
+  },
+
+  computed: {
+    topP() {
+      return this.top + '%';
     }
   },
 
@@ -147,7 +154,7 @@ export default {
       const v1xp = this.toPosition ? (this.conf1.x0 - this.circle1.x) / 100 : this.velocity(this.circle1.vx, a1x);
       const v1yp = this.toPosition ? (this.conf1.y0 - this.circle1.y) / 100 : this.velocity(this.circle1.vy, a1y);
       const v2xp = this.toPosition ? (this.conf2.x0 - this.circle2.x) / 100 : this.velocity(this.circle2.vx, a2x);
-      const v2yp = this.toPosition ? (this.conf2.y0 - this.circle2.y) / 100: this.velocity(this.circle2.vy, a2y);
+      const v2yp = this.toPosition ? (this.conf2.y0 - this.circle2.y) / 100 : this.velocity(this.circle2.vy, a2y);
 
       const dx1 = this.distance(v1xp);
       const dy1 = this.distance(v1yp);
@@ -182,8 +189,15 @@ export default {
 
       this.conf1.radius = this.radiusTransform(d);
       this.conf2.radius = this.radiusTransform(d);
+
+      if (this.toPosition && this.top > 15) {
+        this.top -= 0.75/2 * (2 - (Math.abs(this.top-32.5))/17.5);
+      }
       
-      if (Math.abs(this.circle1.x - this.conf1.x0) < 10 && Math.abs(v1xp) < 0.001 && this.toPosition) clearInterval(this.anim);
+      if (Math.abs(this.circle1.x - this.conf1.x0) < 10 && Math.abs(v1xp) < 0.001 && this.toPosition) {
+        this.top = 15;
+        clearInterval(this.anim);
+      }
     },
 
     toMenu() {
@@ -212,7 +226,7 @@ p {
 
 .header {
   position: absolute;
-  top: 50%;
+  top: v-bind('topP');
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1;
